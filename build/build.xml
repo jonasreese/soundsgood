@@ -1,0 +1,278 @@
+<?xml version="1.0"?>
+
+<!-- ===================================================================
+
+Author: Jonas Reese 25.03.2002, Hamburg
+
+Copyright:
+       Jonas Reese. Alle Rechte vorbehalten.
+
+Description: Building the SoundsGood application project
+
+Remarks:
+
+Note:
+
+ToDo:
+
+History:
+
+==================================================================== -->
+
+<project default="usage" basedir="../.">
+
+  <taskdef resource="proguard/ant/task.properties"
+           classpath="${basedir}/build/lib/proguard.jar" />
+  
+
+  <target name="init">
+
+    <property file="ant.properties" />
+    
+    <property name="name" value="soundsgood"/>
+    <property name="Name" value="SoundsGood application project"/>
+    <property name="year" value="2003"/>
+    <property name="copyright" value="Copyright &#169; ${year} Jonas Reese. All Rights Reserved."/>
+
+    <echo message= "---------------- ${Name} ${soundsgood.project.version} [${year}] ---------------"/>
+    <echo message= "---------------- ${Name} ${java.version} [${year}] ---------------"/>
+
+    <property name="deployment.dir" value="${basedir}/deployment"/>
+
+    <property name="distribution.dir" value="${basedir}/dist"/>
+    <property name="distribution.obfuscation.dir" value="${distribution.dir}/obfuscated"/>
+
+    <property name="src.dir" value="${basedir}/source"/>
+    <property name="classes.dir" value="${basedir}/classes"/>
+    <property name="lib.dir" value="${basedir}/lib"/>
+    <property name="javadocs.dir" value="${basedir}/documentation/javadoc"/>
+    <property name="dist.dir" value="${basedir}/dist"/>
+    <property name="resource.dir" value="${basedir}/resource"/> 
+    
+    
+    <!--
+    <property name="build.compiler" value="jikes"/>
+    -->
+    <property name="build.compiler" value="modern"/>
+    <property name="build.debug" value="on"/>
+    <property name="build.optimize" value="on"/>
+    <property name="build.deprecation" value="on"/>
+
+    <!--
+    <property name="javasoft.classes" value="c:/programme/jdk1.1.8/lib/classes.zip"/>
+    -->
+    
+        <tstamp>
+                <format property="build.starttime" pattern="yyyyMMdd_hhmmss" unit="second"/>
+        </tstamp>
+
+    <echo message= "Current time: ${build.starttime}"/>
+
+    <echo message= "Target version: ${soundsgood.project.version}"/>
+
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Compiles the source directory                                       -->
+  <!-- =================================================================== -->
+  <target name="compile" depends="init">
+    <echo message="Creating directories..."/>
+    <mkdir dir="${classes.dir}"/>
+    <echo message="Copying resources..."/>
+    <copy todir="${classes.dir}">
+      <fileset dir="${src.dir}">
+        <exclude name="**/*.java"/>
+        <exclude name="**/package.html"/> 
+      </fileset>
+    </copy>
+    <echo message="Compiling..."/>
+    <javac srcdir="${src.dir}"
+           destdir="${classes.dir}"
+           debug="${build.debug}"
+           deprecation="${build.deprecation}"
+           optimize="${build.optimize}"
+           includeAntRuntime="false">
+      <classpath>
+        <fileset dir="${lib.dir}">
+          <include name="**"/>
+        </fileset>
+      </classpath>
+    </javac>
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Creates the class package                                           -->
+  <!-- =================================================================== -->
+  <target name="jar" depends="compile">
+    <mkdir dir="${dist.dir}"/>
+    <jar jarfile="${dist.dir}/${name}_v${soundsgood.project.version}_${build.starttime}.jar"
+         basedir="${classes.dir}"
+         includes="**"/>
+  </target>
+  
+  <!-- =================================================================== -->
+  <!-- Creates the Javadoc documentation                                   -->
+  <!-- =================================================================== -->
+  <target name="javadoc" depends="init">
+    <javadoc packagenames="*"
+           sourcepath="${src.dir}"
+           defaultexcludes="yes"
+           destdir="${javadocs.dir}"
+           author="true"
+           version="true"
+           use="true"
+           windowtitle="${Name}">
+      <bottom><![CDATA[<i>${Name}<br>${copyright}</i>]]></bottom>
+    </javadoc>
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Creates the Native Interface Header file                            -->
+  <!-- =================================================================== -->
+  <target name="jniheader" depends="compile">
+    <javah
+      class="com.jonasreese.sound.vstcontainer.VstPlugin"
+      classpath="${classes.dir}"
+      destdir="${resource.dir}"/>
+    <javah
+      class="com.jonasreese.sound.aucontainer.AUContainer"
+      classpath="${classes.dir}"
+      destdir="${resource.dir}"/>
+    <javah
+      class="com.jonasreese.sound.aucontainer.AudioUnit"
+      classpath="${classes.dir}"
+      destdir="${resource.dir}"/>
+  </target>
+  
+  <!-- =================================================================== -->
+  <!-- Builds the distribution                                             -->
+  <!-- =================================================================== -->
+  <target name="dist" depends="compile">
+    <mkdir dir="${dist.dir}"/>
+    <mkdir dir="${dist.dir}/lib"/>
+    <copy todir="${dist.dir}/lib">
+        <fileset dir="${lib.dir}"/>
+    </copy>
+    <pathconvert property="classpath" pathsep=" " dirsep="/">
+      <path location="${dist.dir}/">
+        <fileset dir="${dist.dir}/lib" includes="**"/> 
+      </path>
+      <chainedmapper>
+        <flattenmapper/>
+        <globmapper from="*" to="lib/*"/>
+      </chainedmapper> 
+    </pathconvert> 
+    <jar jarfile="${dist.dir}/${name}.jar"
+         basedir="${classes.dir}"
+         includes="**">
+      <manifest>
+        <attribute name="Built-By" value="${user.name}"/>
+        <section name="common">
+          <attribute name="Specification-Title" value="${name}"/>
+          <attribute name="Specification-Version" value=""/>
+          <attribute name="Specification-Vendor" value=""/>
+          <attribute name="Implementation-Title" value="${name}"/>
+          <attribute name="Implementation-Version" value=""/> 
+          <attribute name="Implementation-Vendor" value="jonasreese"/>
+        </section>
+        <attribute name="Class-Path" value="${classpath}"/> 
+        <attribute name="Main-Class" value="com.jonasreese.sound.sg.SoundsGood"/> 
+      </manifest> 
+    </jar> 
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Builds the obfuscated distribution                                  -->
+  <!-- =================================================================== -->
+  <target name="obfuscate" depends="dist">
+    <proguard printseeds="on">
+
+      <!-- Specify the input jars, output jars, and library jars. -->
+  
+      <injar  file="${dist.dir}/soundsgood.jar" />
+      <outjar file="${dist.dir}/soundsgood_obfuscated" />
+  
+      <libraryjar file="${java.home}/lib/rt.jar" />
+      <libraryjar dir="${lib.dir}"/> 
+  
+      <!-- Keep SoundsGood main class main method --> 
+      <keep access="public" name="com.jonasreese.sound.sg.SoundsGood">
+        <method access    ="public static"
+          type      ="void"
+          name      ="main"
+          parameters="java.lang.String[]" />
+      </keep>
+  
+      <!-- Keep all plugin classes -->
+      <keep implements="com.jonasreese.sound.sg.plugin.Plugin" /> 
+
+      <keep name="com.jonasreese.sound.sg.midi.sequencer.*"/>
+      <keep implements="com.jonasreese.sound.sg.ui.ViewInstanceCreator"/> 
+      <keep implements="com.jonasreese.sound.sg.plugin.view.ViewContainer"/> 
+      <keep extends="com.jonasreese.sound.sg.SessionElementDescriptor"/> 
+      
+      <!-- Keep VST implementation (VstContainer) classes -->
+      <keep name="com.jonasreese.sound.vstcontainer.*"/>
+
+      <!-- Explicitly preserve all serialization members. The Serializable
+           interface is only a marker interface, so it wouldn't save them.
+           You can comment this out if your library doesn't use serialization.
+           If your code contains serializable classes that have to be backward
+           compatible, please refer to the manual. -->
+  
+      <keepclassmembers implements="java.io.Serializable">
+        <field  access    ="final"
+                type      ="long"
+                name      ="serialVersionUID" />
+        <method access    ="private"
+                type      ="void"
+                name      ="writeObject"
+                parameters="java.io.ObjectOutputStream" />
+        <method access    ="private"
+                type      ="void"
+                name      ="readObject"
+                parameters="java.io.ObjectOutputStream" />
+        <method type      ="java.lang.Object"
+                name      ="writeReplace"
+                parameters="" />
+        <method type      ="java.lang.Object"
+                name      ="readResolve"
+                parameters="" />
+      </keepclassmembers>
+  
+      </proguard> 
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Cleans everything                                                   -->
+  <!-- =================================================================== -->
+  <target name="clean" depends="init">
+    <delete dir="${classes.dir}"/>
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Help on usage                                                       -->
+  <!-- =================================================================== -->
+  <target name="usage">
+    <echo message=""/>
+    <echo message=""/>
+    <echo message="${Name} Build instructions"/>
+    <echo message="---------------------------------------------------------------------"/>
+    <echo message=""/>
+    <echo message=" available targets are:"/>
+    <echo message=""/>
+    <echo message="   compile    --> compiles the whole soundsgood project"/>
+    <echo message="   jar        --> compiles whole soundsgood project and creates JAR"/>
+    <echo message="   dist       --> creates the whole distribution version"/>
+    <echo message="   clean      --> cleans up all generated files and directories"/>
+    <echo message="   obfuscate  --> builds the distribution version and obfuscates it"/>
+    <echo message="   jniheader  --> creates native interface C header(s)"/>
+    <echo message="   usage      --> provides help on using the build tool (default)"/>
+    <echo message=""/>
+    <echo message=" See comments inside the build.xml file for more details."/>
+    <echo message="---------------------------------------------------------------------"/>
+    <echo message=""/>
+    <echo message=""/>
+  </target>
+
+</project>

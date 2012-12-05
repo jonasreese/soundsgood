@@ -1,0 +1,17 @@
+Allgemein:
+
+- Shortcut-Tasten funktionieren nicht immer (Strg+X)
+- Relative Pfadangaben zu Session-Dateien
+- Nach dem Programmstart kein SessionElement selektiert
+- Quantisierung implementieren
+- Grid ignoriert Taktung (z.B. 7/8)
+- Default-Projekt (Öffnen von Dateien ohne Session erlauben)
+
+
+VST:
+
+- MIDI-Umsetzung vollständig implementieren
+- process()-Methode korrekt implementieren
+- Eigene UI für automatisierte Parameter
+- Parameter abspeichern/wiederherstellen
+- openEditWindow() auf AWT-Komponente

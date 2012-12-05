@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<soundbus tempo="120.0">
+  <nodes>
+    <node type="midiNoteCounter" name="MIDI-Notenzähler" id="74e0eb3f">
+      <properties>
+        <property name="bounds">0.0,0.0,161.0,92.0</property>
+        <property name="offset">378.0,62.0</property>
+      </properties>
+      <inputs>
+        <input type="midi" name="MIDI-Eingang" id="2198a037" />
+      </inputs>
+      <outputs>
+        <output type="midi" name="MIDI-Ausgang" id="17609872" />
+      </outputs>
+    </node>
+    <node type="midiFilter" name="MIDI-Filter" id="288d539f">
+      <parameters>
+        <parameter name="midiFilter">true|false|{144}{127,126,125,124,123,122,121,120,119,118,117,116,115,114,113,112,111,110,109,108,107,106,105,104,103,102,101,100,99,98,97,96,95,94,93,92,91,90,89,88,87,86,85,84,83,82,81,80,79,78,77,76,75,74,73,72,71,70,69,68,67,66,65,64,63,62,61,60,59,58,57,56,55,54,53,52,51,50,49,48,47,46,45,44,43,42,41,40,39,38,37,36,35,34,33,32,31,30,29,28,27,26,25,24,23,22,21,20,19,18,17,16,15,14,13,12,11,10,9,8,7,6,5,4,3,2,1}{*}</parameter>
+      </parameters>
+      <properties>
+        <property name="displayInfo">true</property>
+        <property name="bounds">0.0,0.0,137.0,96.0</property>
+        <property name="offset">592.0,60.0</property>
+      </properties>
+      <inputs>
+        <input type="midi" name="MIDI-Eingang" id="75636731" />
+      </inputs>
+      <outputs>
+        <output type="midi" name="MIDI-Ausgang" id="2b3e8c1c" />
+      </outputs>
+    </node>
+    <node type="tempo" name="Tempo" id="7f1f91ac">
+      <parameters>
+        <parameter name="clickEnabled">false</parameter>
+        <parameter name="playDefaultClick">true</parameter>
+        <parameter name="beatsPerTact">4</parameter>
+      </parameters>
+      <properties>
+        <property name="bounds">-124.0,-225.0,208.0,143.0</property>
+        <property name="opticalClick">true</property>
+        <property name="offset">241.0,262.0</property>
+      </properties>
+      <inputs>
+        <input type="midi" name="Eingang zum Ein-/Ausschalten des MIDI-Klicks" id="6a5c2445" />
+        <input type="midi" name="Eingang für MIDI-Takt" id="47516490" />
+      </inputs>
+      <outputs>
+        <output type="midi" name="Ausgang für MIDI-Klick" id="2e29d50d" />
+      </outputs>
+    </node>
+    <node type="midiFilter" name="MIDI-Filter" id="6a39d072">
+      <parameters>
+        <parameter name="midiFilter">false|true|{144}{0}{0}</parameter>
+      </parameters>
+      <properties>
+        <property name="displayInfo">true</property>
+        <property name="bounds">0.0,0.0,134.0,102.0</property>
+        <property name="offset">595.0,253.0</property>
+      </properties>
+      <inputs>
+        <input type="midi" name="MIDI-Eingang" id="3c626028" />
+      </inputs>
+      <outputs>
+        <output type="midi" name="MIDI-Ausgang" id="bc6f1f4" />
+      </outputs>
+    </node>
+    <node type="midiNoteCounter" name="MIDI-Notenzähler" id="6ec12f3">
+      <properties>
+        <property name="bounds">0.0,0.0,152.0,97.0</property>
+        <property name="offset">376.0,256.0</property>
+      </properties>
+      <inputs>
+        <input type="midi" name="MIDI-Eingang" id="3236d036" />
+      </inputs>
+      <outputs>
+        <output type="midi" name="MIDI-Ausgang" id="2c9fa2fb" />
+      </outputs>
+    </node>
+    <node type="midiBranch" name="MIDI-Verzweigung" id="893fd01">
+      <properties>
+        <property name="bounds">0.0,0.0,162.0,98.0</property>
+        <property name="offset">796.0,254.0</property>
+      </properties>
+      <inputs>
+        <input type="midi" name="MIDI-Eingang" id="248523a0" />
+      </inputs>
+      <outputs>
+        <output type="midi" name="MIDI-Ausgang" id="510bfe2c" />
+        <output type="midi" name="MIDI-Ausgang" id="5e970110" />
+        <output type="midi" name="MIDI-Ausgang" id="57f68d7c" />
+      </outputs>
+    </node>
+    <node type="osc" name="OSC" id="44f757b9">
+      <parameters>
+        <parameter name="sendToHost">10.55.19.255</parameter>
+        <parameter name="sendToPort">9001</parameter>
+        <parameter name="clickOnOffMessageAddress">/sg/click</parameter>
+        <parameter name="sendEnabled">true</parameter>
+        <parameter name="tempoMessageAddress">/sg/click</parameter>
+        <parameter name="receivePort">8001</parameter>
+      </parameters>
+      <properties>
+        <property name="bounds">-26.0,0.0,156.0,95.0</property>
+        <property name="offset">396.0,413.0</property>
+      </properties>
+      <outputs>
+        <output type="midi" name="MIDI-Ausgang" id="7bc2f501" />
+      </outputs>
+    </node>
+    <node type="midiInput" name="MIDI-Eingabegerät" id="6471d768">
+      <properties>
+        <property name="bounds">0.0,0.0,180.0,95.0</property>
+        <property name="offset">576.0,411.0</property>
+      </properties>
+      <outputs>
+        <output type="midi" name="MIDI-Ausgang" id="20e5f01b" />
+      </outputs>
+    </node>
+    <node type="midiJunction" name="MIDI-Zusammenführung" id="781fb069">
+      <properties>
+        <property name="bounds">-14.0,0.0,194.0,95.0</property>
+        <property name="offset">138.0,257.0</property>
+      </properties>
+      <inputs>
+        <input type="midi" name="MIDI-Eingang" id="3c635421" />
+        <input type="midi" name="MIDI-Eingang" id="1d286180" />
+        <input type="midi" name="MIDI-Eingang" id="46192974" />
+      </inputs>
+      <outputs>
+        <output type="midi" name="MIDI-Ausgang" id="30a14e84" />
+      </outputs>
+    </node>
+  </nodes>
+  <connections>
+    <connection>
+      <input nodeId="74e0eb3f" inputId="2198a037" />
+      <output nodeId="288d539f" outputId="2b3e8c1c" />
+    </connection>
+    <connection>
+      <input nodeId="288d539f" inputId="75636731" />
+      <output nodeId="893fd01" outputId="510bfe2c" />
+    </connection>
+    <connection>
+      <input nodeId="7f1f91ac" inputId="6a5c2445" />
+      <output nodeId="74e0eb3f" outputId="17609872" />
+    </connection>
+    <connection>
+      <input nodeId="7f1f91ac" inputId="47516490" />
+      <output nodeId="781fb069" outputId="30a14e84" />
+    </connection>
+    <connection>
+      <input nodeId="6a39d072" inputId="3c626028" />
+      <output nodeId="893fd01" outputId="5e970110" />
+    </connection>
+    <connection>
+      <input nodeId="6ec12f3" inputId="3236d036" />
+      <output nodeId="6a39d072" outputId="bc6f1f4" />
+    </connection>
+    <connection>
+      <input nodeId="893fd01" inputId="248523a0" />
+      <output nodeId="6471d768" outputId="20e5f01b" />
+    </connection>
+    <connection>
+      <input nodeId="781fb069" inputId="3c635421" />
+      <output nodeId="44f757b9" outputId="7bc2f501" />
+    </connection>
+    <connection>
+      <input nodeId="781fb069" inputId="1d286180" />
+      <output nodeId="6ec12f3" outputId="2c9fa2fb" />
+    </connection>
+  </connections>
+</soundbus>
+
