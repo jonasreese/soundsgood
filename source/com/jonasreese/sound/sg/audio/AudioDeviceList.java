@@ -7,6 +7,7 @@
 package com.jonasreese.sound.sg.audio;
 
 
+
 /**
  * <p>
  * This class encapsulates an ordered list of <code>AudioDeviceDescriptor</code>s.
@@ -67,17 +68,27 @@ public class AudioDeviceList {
     }
     
     /**
-     * Gets an <code>AudioDeviceDescriptor</code> by it's ID string.
+     * Gets a <code>AudioDeviceDescriptor</code> by it's ID string.
      * @param idString The ID string to search for. Shall not be <code>null</code>
      * @return A <code>AudioDeviceDescriptor</code>, or <code>null</code> if none
      * with the given ID string was found.
      */
     public AudioDeviceDescriptor getDescriptorById( String idString ) {
-        if (idString == null) {
+        return getDescriptorById(new AudioDeviceId(idString));
+    }
+    
+    /**
+     * Gets a <code>AudioDeviceDescriptor</code> by it's ID string.
+     * @param id The ID to search for. Shall not be <code>null</code>
+     * @return A <code>AudioDeviceDescriptor</code>, or <code>null</code> if none
+     * with the given ID was found.
+     */
+    public AudioDeviceDescriptor getDescriptorById( AudioDeviceId id ) {
+        if (id == null) {
             return null;
         }
         for (int i = 0; i < descriptors.length; i++) {
-            if (idString.equals( descriptors[i].getIdString() )) {
+            if (id.equals( descriptors[i].getId() )) {
                 return descriptors[i];
             }
         }

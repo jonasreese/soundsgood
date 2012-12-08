@@ -48,11 +48,11 @@ public class MidiBranchNodeImpl implements MidiBranchNode, NodeImpl {
         outputs = new SbMidiOutputImpl[numOutputs];
         String outputName = SgEngine.getInstance().getResourceBundle().getString( "midi.output" );
         for (int i = 0; i < numOutputs; i++) {
-            outputs[i] = new SbMidiOutputImpl( outputName );
+            outputs[i] = new SbMidiOutputImpl( outputName, "output_" + (i + 1) );
         };
         inputs = new SbMidiInputImpl[] {
                 new SbMidiInputImpl(
-                        SgEngine.getInstance().getResourceBundle().getString( "midi.input" ) )
+                        SgEngine.getInstance().getResourceBundle().getString( "midi.input" ), "input_1" )
         };
     }
 
@@ -123,9 +123,11 @@ public class MidiBranchNodeImpl implements MidiBranchNode, NodeImpl {
     class SbMidiInputImpl implements SbMidiInput {
         private SbOutput connectedOutput;
         private String name;
+        private String inputId;
         
-        SbMidiInputImpl( String name ) {
+        SbMidiInputImpl( String name, String inputId ) {
             this.name = name;
+            this.inputId = inputId;
         }
         
         public void receive( MidiMessage m, SbOutput output ) {
@@ -145,6 +147,10 @@ public class MidiBranchNodeImpl implements MidiBranchNode, NodeImpl {
             return null;
         }
 
+        public String getInputId() {
+            return inputId;
+        }
+        
         public SbNode getSbNode() {
             return MidiBranchNodeImpl.this;
         }
@@ -184,9 +190,11 @@ public class MidiBranchNodeImpl implements MidiBranchNode, NodeImpl {
     class SbMidiOutputImpl implements SbMidiOutput {
         private SbMidiInput connectedInput;
         private String name;
+        private String outputId;
         
-        SbMidiOutputImpl( String name ) {
+        SbMidiOutputImpl( String name, String outputId ) {
             this.name = name;
+            this.outputId = outputId;
         }
 
         public String getName() {
@@ -196,7 +204,11 @@ public class MidiBranchNodeImpl implements MidiBranchNode, NodeImpl {
         public String getDescription() {
             return null;
         }
-
+        
+        public String getOutputId() {
+            return outputId;
+        }
+        
         public SbNode getSbNode() {
             return MidiBranchNodeImpl.this;
         }

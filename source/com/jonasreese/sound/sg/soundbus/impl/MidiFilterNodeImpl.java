@@ -54,10 +54,10 @@ public class MidiFilterNodeImpl implements MidiFilterNode, NodeImpl {
         propertyChangeSupport = new PropertyChangeSupport( this );
         open = false;
         inputs = new SbMidiInputImpl[] {
-                new SbMidiInputImpl( SgEngine.getInstance().getResourceBundle().getString( "midi.input" ) )
+                new SbMidiInputImpl( SgEngine.getInstance().getResourceBundle().getString( "midi.input" ), "input_1" )
         };
         outputs = new SbMidiOutputImpl[] {
-                new SbMidiOutputImpl( SgEngine.getInstance().getResourceBundle().getString( "midi.output" ) )
+                new SbMidiOutputImpl( SgEngine.getInstance().getResourceBundle().getString( "midi.output" ), "output_1" )
         };
     }
     
@@ -179,10 +179,12 @@ public class MidiFilterNodeImpl implements MidiFilterNode, NodeImpl {
         private SbOutput connectedOutput;
         private String name;
         private List<MidiInputMonitor> monitors;
+        private String inputId;
         
-        SbMidiInputImpl( String name ) {
+        SbMidiInputImpl( String name, String inputId ) {
             this.name = name;
             monitors = new ArrayList<MidiInputMonitor>();
+            this.inputId = inputId;
         }
         
         public void receive( MidiMessage m, SbOutput output ) {
@@ -204,6 +206,10 @@ public class MidiFilterNodeImpl implements MidiFilterNode, NodeImpl {
             return null;
         }
 
+        public String getInputId() {
+            return inputId;
+        }
+        
         public SbNode getSbNode() {
             return MidiFilterNodeImpl.this;
         }
@@ -254,9 +260,11 @@ public class MidiFilterNodeImpl implements MidiFilterNode, NodeImpl {
     class SbMidiOutputImpl implements SbMidiOutput {
         private SbMidiInput connectedInput;
         private String name;
+        private String outputId;
 
-        SbMidiOutputImpl( String name ) {
+        SbMidiOutputImpl( String name, String outputId ) {
             this.name = name;
+            this.outputId = outputId;
         }
         
         public boolean canConnect( SbInput in ) {
@@ -299,6 +307,10 @@ public class MidiFilterNodeImpl implements MidiFilterNode, NodeImpl {
             return null;
         }
 
+        public String getOutputId() {
+            return outputId;
+        }
+        
         public SbNode getSbNode() {
             return MidiFilterNodeImpl.this;
         }

@@ -62,7 +62,7 @@ public class AudioSamplerNodeImpl implements AudioSamplerNode, NodeImpl {
         propertyChangeSupport = new PropertyChangeSupport( this );
         open = false;
         inputs = new SbMidiInputImpl[] {
-                new SbMidiInputImpl( SgEngine.getInstance().getResourceBundle().getString( "midi.trigger.input" ) )
+                new SbMidiInputImpl( SgEngine.getInstance().getResourceBundle().getString( "midi.trigger.input" ), "input_1" )
         };
         outputs = new SbAudioOutputImpl[] { new SbAudioOutputImpl() };
         audioDescriptor = null;
@@ -293,9 +293,11 @@ public class AudioSamplerNodeImpl implements AudioSamplerNode, NodeImpl {
     class SbMidiInputImpl implements SbMidiInput {
         private SbOutput connectedOutput;
         private String name;
+        private String inputId;
         
-        SbMidiInputImpl( String name ) {
+        SbMidiInputImpl( String name, String inputId ) {
             this.name = name;
+            this.inputId = inputId;
         }
         
         public void receive( MidiMessage m, SbOutput output ) {
@@ -343,6 +345,10 @@ public class AudioSamplerNodeImpl implements AudioSamplerNode, NodeImpl {
             return null;
         }
 
+        public String getInputId() {
+            return inputId;
+        }
+        
         public SbNode getSbNode() {
             return AudioSamplerNodeImpl.this;
         }
@@ -401,6 +407,10 @@ public class AudioSamplerNodeImpl implements AudioSamplerNode, NodeImpl {
         
         public String getDescription() {
             return AudioToolkit.getAudioOutputDescription( getAudioFormat() );
+        }
+        
+        public String getOutputId() {
+            return "output_1";
         }
 
         public boolean canConnect( SbInput in ) {

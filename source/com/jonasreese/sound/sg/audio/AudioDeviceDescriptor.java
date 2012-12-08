@@ -19,37 +19,22 @@ import com.jonasreese.sound.sg.SgEngine;
 public class AudioDeviceDescriptor {
     
     private Mixer.Info deviceInfo;
-    private String idString;
+    private AudioDeviceId id;
     
     /**
      * Constructs a new <code>MixerDescriptor</code>.
      * @param deviceInfo The audio device info.
-     * @param idString A <code>String</code> that identifies the audio device
+     * @param id A <code>String</code> that identifies the audio device
      *        described by this <code>MixerDescriptor</code>.
      */
-    public AudioDeviceDescriptor( Mixer.Info deviceInfo, String idString ) {
+    public AudioDeviceDescriptor( Mixer.Info deviceInfo, AudioDeviceId id ) {
         this.deviceInfo = deviceInfo;
-        if (deviceInfo != null && idString == null) {
-            idString = deviceInfo.getVendor() + deviceInfo.getName() +
-                deviceInfo.getVersion() + deviceInfo.getDescription();
+        if (id == null) {
+            id = new AudioDeviceId(deviceInfo);
         }
-        this.idString = stripWhitespaces( idString );
+        this.id = id;
     }
 
-    private String stripWhitespaces( String s ) {
-        if (s == null) {
-            return null;
-        }
-        StringBuffer sb = new StringBuffer();
-        char[] chars = s.toCharArray();
-        for (int i = 0; i < chars.length; i++) {
-            if (!Character.isWhitespace( chars[i] )) {
-                sb.append( chars[i] );
-            }
-        }
-        return sb.toString();
-    }
-    
     /**
      * Gets the audio device info.
      * @return The audio device info.
@@ -59,19 +44,19 @@ public class AudioDeviceDescriptor {
     }
     
     /**
-     * Returns the ID string.
-     * @return The ID string.
+     * Returns the ID.
+     * @return The ID.
      */
-    public String getIdString() {
-        return idString;
+    public AudioDeviceId getId() {
+        return id;
     }
     
     /**
-     * Sets the ID string.
-     * @param idString The ID string to set.
+     * Sets the ID.
+     * @param id The ID to set.
      */
-    public void setIdString( String idString ) {
-        this.idString = stripWhitespaces(idString);
+    public void setId( AudioDeviceId id ) {
+        this.id = id;
     }
     
     public String toString() {
@@ -83,10 +68,8 @@ public class AudioDeviceDescriptor {
     }
     
     public boolean equals( AudioDeviceDescriptor another ) {
-        if (deviceInfo != null && another.deviceInfo != null) {
-            return (deviceInfo == another.deviceInfo);
-        } else if (idString != null && another.idString != null) {
-            return (idString.equals( another.idString ));
+        if (id != null && another.id != null) {
+            return id.equals(another.id);
         }
         return false;
     }

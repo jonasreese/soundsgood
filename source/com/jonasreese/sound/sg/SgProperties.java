@@ -30,6 +30,7 @@ import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Mixer;
 
 import com.jonasreese.sound.sg.audio.AudioDeviceDescriptor;
+import com.jonasreese.sound.sg.audio.AudioDeviceId;
 import com.jonasreese.sound.sg.audio.AudioDeviceList;
 import com.jonasreese.sound.sg.midi.MidiDeviceDescriptor;
 import com.jonasreese.sound.sg.midi.MidiDeviceId;
@@ -1102,12 +1103,11 @@ public class SgProperties
             if (deviceList.getAudioDeviceDescriptor( i ).getDeviceInfo() != null)
             {
                 Mixer.Info devInfo = deviceList.getAudioDeviceDescriptor( i ).getDeviceInfo();
-                String idString = devInfo.getVendor() + devInfo.getName() +
-                    devInfo.getVersion() + devInfo.getDescription();
-                deviceList.getAudioDeviceDescriptor( i ).setIdString( idString );
-                id.append( idString );
+                AudioDeviceId devId = new AudioDeviceId(devInfo);
+                deviceList.getAudioDeviceDescriptor( i ).setId(devId);
+                id.append(devId.getIdString());
             } else {
-                id.append( deviceList.getAudioDeviceDescriptor( i ).getIdString() );
+                id.append(deviceList.getAudioDeviceDescriptor(i).getId().getIdString());
             }
         }
         String s = p.getProperty( AUDIO_INPUT_DEVICE_KEY );
@@ -1140,16 +1140,16 @@ public class SgProperties
             String listItemId = st.nextToken();
             boolean b = false;
             for (int i = 0; i < info.length; i++) {
-                String id = info[i].getVendor() + info[i].getName() +
-                       info[i].getVersion() + info[i].getDescription();
+                AudioDeviceId devId = new AudioDeviceId(info[i]);
+                
                 // found!
-                if (id.equals( listItemId )) {
-                    list.add( new AudioDeviceDescriptor( info[i], id ) );
+                if (devId.getIdString().equals(listItemId)) {
+                    list.add(new AudioDeviceDescriptor(info[i], devId));
                     b = true;
                 }
             }
             if (!b) {
-                list.add( new AudioDeviceDescriptor( null, listItemId ) );
+                list.add(new AudioDeviceDescriptor(null, new AudioDeviceId(listItemId)));
             }
         }
         AudioDeviceDescriptor[] result = new AudioDeviceDescriptor[list.size()];
@@ -1178,12 +1178,11 @@ public class SgProperties
             if (deviceList.getAudioDeviceDescriptor( i ).getDeviceInfo() != null)
             {
                 Mixer.Info devInfo = deviceList.getAudioDeviceDescriptor( i ).getDeviceInfo();
-                String idString = devInfo.getVendor() + devInfo.getName() +
-                    devInfo.getVersion() + devInfo.getDescription();
-                deviceList.getAudioDeviceDescriptor( i ).setIdString( idString );
-                id.append( idString );
+                AudioDeviceId devId = new AudioDeviceId(devInfo);
+                deviceList.getAudioDeviceDescriptor(i).setId(devId);
+                id.append(devId.getIdString());
             } else {
-                id.append( deviceList.getAudioDeviceDescriptor( i ).getIdString() );
+                id.append(deviceList.getAudioDeviceDescriptor(i).getId());
             }
         }
         String s = p.getProperty( AUDIO_OUTPUT_DEVICE_KEY );
@@ -1216,16 +1215,15 @@ public class SgProperties
             String listItemId = st.nextToken();
             boolean b = false;
             for (int i = 0; i < info.length; i++) {
-                String id = info[i].getVendor() + info[i].getName() +
-                       info[i].getVersion() + info[i].getDescription();
+                AudioDeviceId devId = new AudioDeviceId(info[i]);
                 // found!
-                if (id.equals( listItemId )) {
-                    list.add( new AudioDeviceDescriptor( info[i], id ) );
+                if (devId.getIdString().equals(listItemId)) {
+                    list.add(new AudioDeviceDescriptor(info[i], devId));
                     b = true;
                 }
             }
             if (!b) {
-                list.add( new AudioDeviceDescriptor( null, listItemId ) );
+                list.add(new AudioDeviceDescriptor(null, new AudioDeviceId(listItemId)));
             }
         }
         AudioDeviceDescriptor[] result = new AudioDeviceDescriptor[list.size()];

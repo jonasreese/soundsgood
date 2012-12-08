@@ -71,7 +71,7 @@ public class AudioOutputNodeImpl implements AudioOutputNode, NodeImpl {
         }
         if (this.audioDevice == audioDevice ||
                 (audioDevice != null && this.audioDevice != null &&
-                        audioDevice.getIdString().equals( this.audioDevice.getIdString() ))) {
+                        audioDevice.getId().equals( this.audioDevice.getId() ))) {
             return;
         }
         AudioDeviceDescriptor oldDevice = this.audioDevice;
@@ -231,6 +231,10 @@ public class AudioOutputNodeImpl implements AudioOutputNode, NodeImpl {
             return AudioToolkit.getAudioInputName( AudioToolkit.getDefaultAudioFormat() );
         }
         
+        public String getInputId() {
+            return "input_1";
+        }
+        
         public AudioFormat getAudioFormat() {
             return audioFormat;
         }
@@ -323,7 +327,7 @@ public class AudioOutputNodeImpl implements AudioOutputNode, NodeImpl {
         if (audioDevice == null) {
             return null;
         }
-        return Collections.singletonMap( "audioDevice", audioDevice.getIdString() );
+        return Collections.singletonMap( "audioDevice", audioDevice.getId().getIdString() );
     }
 
     public void setParameters( Map<String, String> parameters ) {

@@ -59,11 +59,11 @@ public class MidiNoteCounterNodeImpl implements MidiNoteCounterNode {
         clientProperties = new HashMap<String,String>();
         propertyChangeSupport = new PropertyChangeSupport( this );
         outputs = new SbMidiOutputImpl[] {
-                new SbMidiOutputImpl( SgEngine.getInstance().getResourceBundle().getString( "midi.output" ) )
+                new SbMidiOutputImpl( SgEngine.getInstance().getResourceBundle().getString( "midi.output" ), "output_1" )
         };
         inputs = new SbMidiInputImpl[1];
         String inputName = SgEngine.getInstance().getResourceBundle().getString( "midi.input" );
-        inputs[0] = new SbMidiInputImpl( inputName );
+        inputs[0] = new SbMidiInputImpl( inputName, "input_1" );
 
     }
     
@@ -175,9 +175,11 @@ public class MidiNoteCounterNodeImpl implements MidiNoteCounterNode {
     class SbMidiInputImpl implements SbMidiInput {
         private SbOutput connectedOutput;
         private String name;
+        private String inputId;
         
-        SbMidiInputImpl( String name ) {
+        SbMidiInputImpl( String name, String inputId ) {
             this.name = name;
+            this.inputId = inputId;
         }
         
         public void receive( MidiMessage m, SbOutput output ) {
@@ -209,6 +211,10 @@ public class MidiNoteCounterNodeImpl implements MidiNoteCounterNode {
             return null;
         }
 
+        public String getInputId() {
+            return inputId;
+        }
+        
         public SbNode getSbNode() {
             return MidiNoteCounterNodeImpl.this;
         }
@@ -250,9 +256,11 @@ public class MidiNoteCounterNodeImpl implements MidiNoteCounterNode {
     class SbMidiOutputImpl implements SbMidiOutput {
         private SbMidiInput connectedInput;
         private String name;
+        private String outputId;
         
-        SbMidiOutputImpl( String name ) {
+        SbMidiOutputImpl( String name, String outputId ) {
             this.name = name;
+            this.outputId = outputId;
         }
 
         public String getName() {
@@ -263,6 +271,10 @@ public class MidiNoteCounterNodeImpl implements MidiNoteCounterNode {
             return null;
         }
 
+        public String getOutputId() {
+            return outputId;
+        }
+        
         public SbNode getSbNode() {
             return MidiNoteCounterNodeImpl.this;
         }

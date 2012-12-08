@@ -79,7 +79,7 @@ public class OSCNodeImpl implements OSCNode, NodeImpl {
         open = false;
         clientProperties = new HashMap<String,String>();
         outputs = new SbMidiOutputImpl[] {
-                new SbMidiOutputImpl(SgEngine.getInstance().getResourceBundle().getString("midi.output"))
+                new SbMidiOutputImpl(SgEngine.getInstance().getResourceBundle().getString("midi.output"), "output_1")
         };;
         propertyChangeSupport = new PropertyChangeSupport(this);
         
@@ -493,9 +493,11 @@ public class OSCNodeImpl implements OSCNode, NodeImpl {
         
         private SbMidiInput connectedInput;
         private String name;
+        private String outputId;
         
-        SbMidiOutputImpl( String name ) {
+        SbMidiOutputImpl( String name, String outputId ) {
             this.name = name;
+            this.outputId = outputId;
         }
 
         public String getName() {
@@ -506,6 +508,10 @@ public class OSCNodeImpl implements OSCNode, NodeImpl {
             return null;
         }
 
+        public String getOutputId() {
+            return outputId;
+        }
+        
         public SbNode getSbNode() {
             return OSCNodeImpl.this;
         }

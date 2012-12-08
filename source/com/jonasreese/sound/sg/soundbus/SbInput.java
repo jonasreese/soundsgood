@@ -28,6 +28,13 @@ public interface SbInput {
     public String getDescription();
     
     /**
+     * Gets a unique ID for this input.
+     * @return The input ID, or <code>null</code> if this input is unique
+     * because it is the only one.
+     */
+    public String getInputId();
+    
+    /**
      * Gets the parent soundbus node.
      * @return The <code>SbNode</code> this <code>SbInput</code> belongs to.
      */

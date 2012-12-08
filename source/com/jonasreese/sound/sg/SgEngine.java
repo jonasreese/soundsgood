@@ -624,7 +624,7 @@ public class SgEngine {
                 // since we have problems with a Sun implementation
                 // of ShortMessage, we change to the original ShortMessage
                 // therefor, we copy the whole sequence
-                int c = 0;
+                //int c = 0;
                 Track[] tracks = seq.getTracks();
                 SgMidiSequence copiedSeq =
                     new SgMidiSequence( seq.getDivisionType(), seq.getResolution(), tracks.length, descriptor );
@@ -643,7 +643,7 @@ public class SgEngine {
                             MidiEvent event2 = new MidiEvent( message2, event.getTick() );
     
                             copiedTracks[i].add( event2 );
-                            c++;
+                            //c++;
                         } else {
                             copiedTracks[i].add( event );
                         }

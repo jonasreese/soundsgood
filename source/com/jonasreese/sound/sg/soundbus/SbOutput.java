@@ -31,6 +31,13 @@ public interface SbOutput {
     public String getDescription();
     
     /**
+     * Gets a unique ID for this output.
+     * @return The output ID, or <code>null</code> if this output is unique
+     * because it is the only one.
+     */
+    public String getOutputId();
+    
+    /**
      * Gets the parent soundbus node.
      * @return The <code>SbNode</code> this <code>SbOutput</code> belongs to.
      */

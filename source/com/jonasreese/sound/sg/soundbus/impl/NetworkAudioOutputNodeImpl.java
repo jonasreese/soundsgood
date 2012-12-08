@@ -181,6 +181,10 @@ public class NetworkAudioOutputNodeImpl implements NetworkAudioOutputNode, NodeI
         public String getDescription() {
             return AudioToolkit.getAudioInputDescription( getAudioFormat() );
         }
+        
+        public String getInputId() {
+            return "output_1";
+        }
 
         public void receive( byte[] audioData, int offset, int length, AudioDataPump pump ) {
             if (socket == null) {

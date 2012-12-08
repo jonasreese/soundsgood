@@ -60,11 +60,11 @@ public class TempoNodeImpl implements TempoNode, NodeImpl {
         propertyChangeSupport = new PropertyChangeSupport( this );
         open = false;
         inputs = new SbMidiInput[] {
-                new SbMidiToggleInputImpl( SgEngine.getInstance().getResourceBundle().getString( "midi.click.toggleInput" ) ),
-                new SbMidiInputImpl( SgEngine.getInstance().getResourceBundle().getString( "midi.click.input" ) )
+                new SbMidiToggleInputImpl( SgEngine.getInstance().getResourceBundle().getString( "midi.click.toggleInput" ), "input_toggle" ),
+                new SbMidiInputImpl( SgEngine.getInstance().getResourceBundle().getString( "midi.click.input" ), "input_tempo" )
         };
         outputs = new SbMidiOutputImpl[] {
-                new SbMidiOutputImpl( SgEngine.getInstance().getResourceBundle().getString( "midi.click.output" ) )
+                new SbMidiOutputImpl( SgEngine.getInstance().getResourceBundle().getString( "midi.click.output" ), "output_click" )
         };
         metronome = new MetronomeImpl( true );
         soundbusListener = new SoundbusAdapter() {
@@ -287,6 +287,7 @@ public class TempoNodeImpl implements TempoNode, NodeImpl {
     class SbMidiInputImpl implements SbMidiInput {
         private SbOutput connectedOutput;
         private String name;
+        private String inputId;
         
         private long lastTime;
         private long lastDuration;
@@ -294,8 +295,9 @@ public class TempoNodeImpl implements TempoNode, NodeImpl {
         private int index;
         private int pointer;
         
-        SbMidiInputImpl( String name ) {
+        SbMidiInputImpl( String name, String inputId ) {
             this.name = name;
+            this.inputId = inputId;
             lastTime = -1;
             lastDuration = -1;
             values = new double[8];
@@ -367,6 +369,10 @@ public class TempoNodeImpl implements TempoNode, NodeImpl {
         public String getDescription() {
             return null;
         }
+        
+        public String getInputId() {
+            return inputId;
+        }
 
         public SbNode getSbNode() {
             return TempoNodeImpl.this;
@@ -408,9 +414,11 @@ public class TempoNodeImpl implements TempoNode, NodeImpl {
         
         private SbOutput connectedOutput;
         private String name;
+        private String inputId;
         
-        SbMidiToggleInputImpl( String name ) {
+        SbMidiToggleInputImpl( String name, String inputId ) {
             this.name = name;
+            this.inputId = inputId;
         }
         
         public void receive( MidiMessage m, SbOutput output ) {
@@ -429,6 +437,10 @@ public class TempoNodeImpl implements TempoNode, NodeImpl {
 
         public String getDescription() {
             return null;
+        }
+        
+        public String getInputId() {
+            return inputId;
         }
 
         public SbNode getSbNode() {
@@ -470,9 +482,11 @@ public class TempoNodeImpl implements TempoNode, NodeImpl {
     class SbMidiOutputImpl implements SbMidiOutput {
         private SbMidiInput connectedInput;
         private String name;
+        private String outputId;
 
-        SbMidiOutputImpl( String name ) {
+        SbMidiOutputImpl( String name, String outputId ) {
             this.name = name;
+            this.outputId = outputId;
         }
         
         public boolean canConnect( SbInput in ) {
@@ -513,6 +527,10 @@ public class TempoNodeImpl implements TempoNode, NodeImpl {
 
         public String getDescription() {
             return null;
+        }
+        
+        public String getOutputId() {
+            return outputId;
         }
 
         public SbNode getSbNode() {

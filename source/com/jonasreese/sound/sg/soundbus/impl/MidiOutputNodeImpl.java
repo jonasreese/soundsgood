@@ -55,7 +55,7 @@ public class MidiOutputNodeImpl implements MidiOutputNode, NodeImpl {
         clientProperties = new HashMap<String,String>();
         propertyChangeSupport = new PropertyChangeSupport( this );
         inputs = new SbInput[] {
-                new SbMidiInputImpl( SgEngine.getInstance().getResourceBundle().getString( "midi.input" ) )
+                new SbMidiInputImpl( SgEngine.getInstance().getResourceBundle().getString( "midi.input" ), "input_1" )
         };
     }
 
@@ -172,10 +172,12 @@ public class MidiOutputNodeImpl implements MidiOutputNode, NodeImpl {
 
         SbMidiOutput output;
         String name;
+        String inputId;
         
         
-        SbMidiInputImpl( String name ) {
+        SbMidiInputImpl( String name, String inputId ) {
             this.name = name;
+            this.inputId = inputId;
         }
         
         public String getName() {
@@ -184,6 +186,10 @@ public class MidiOutputNodeImpl implements MidiOutputNode, NodeImpl {
 
         public String getDescription() {
             return null;
+        }
+        
+        public String getInputId() {
+            return inputId;
         }
 
         public void receive( MidiMessage m, SbOutput output ) {

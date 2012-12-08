@@ -406,6 +406,10 @@ public class AudioUnitNodeImpl implements AudioUnitNode, NodeImpl {
             return AudioToolkit.getAudioInputDescription( AudioToolkit.getDefaultAudioFormat( numInputs ) );
         }
 
+        public String getInputId() {
+            return "input_" + numInputs;
+        }
+        
         public void receive( byte[] inputData, int offset, int length, AudioDataPump pump ) {
             if (audioFormat == null) {
                 audioFormat = pump.getAudioFormat();
@@ -490,6 +494,10 @@ public class AudioUnitNodeImpl implements AudioUnitNode, NodeImpl {
             return AudioToolkit.getAudioOutputDescription( audioFormat );
         }
 
+        public String getOutputId() {
+            return "output_" + (audioFormat != null ? audioFormat.getChannels() : 0);
+        }
+        
         public boolean canConnect( SbInput in ) {
             return (in instanceof SbAudioInput);
         }
@@ -534,6 +542,9 @@ public class AudioUnitNodeImpl implements AudioUnitNode, NodeImpl {
         public String getDescription() {
             return null;
         }
+        public String getInputId() {
+            return "input_1";
+        }
         public void receive( MidiMessage m, SbOutput output ) {
             if (audioUnit != null) {
                 audioUnit.processMidi( m );
@@ -569,6 +580,9 @@ public class AudioUnitNodeImpl implements AudioUnitNode, NodeImpl {
         }
         public String getName() {
             return name;
+        }
+        public String getOutputId() {
+            return "output_1";
         }
         public String getDescription() {
             return null;

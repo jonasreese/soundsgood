@@ -10,10 +10,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Queue;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -149,29 +147,29 @@ public class SoundbusToolkit {
                     SbInput[] inputs = inNode.getInputs();
                     
                     // create maps mapping inputType->Queue<SbInput> and outputType->Queue<SbOutput>
-                    Map<String,Queue<SbInput>> inputMap = new HashMap<String,Queue<SbInput>>();
-                    Map<String,Queue<SbOutput>> outputMap = new HashMap<String,Queue<SbOutput>>();
+                    Map<String,Map<String, SbInput>> inputMap = new HashMap<String,Map<String, SbInput>>();
+                    Map<String,Map<String, SbOutput>> outputMap = new HashMap<String,Map<String, SbOutput>>();
                     
                     for (int i = 0; i < inputs.length; i++) {
                         String type = getTypeForInOut( inputs[i] );
-                        Queue<SbInput> queue = inputMap.get( type );
+                        Map<String, SbInput> queue = inputMap.get( type );
                         if (queue == null) {
-                            queue = new LinkedList<SbInput>();
+                            queue = new HashMap<String, SbInput>();
                             inputMap.put( type, queue );
                         }
                         if (inputs[i].getConnectedOutput() == null) {
-                            queue.offer( inputs[i] );
+                            queue.put( inputs[i].getInputId(), inputs[i] );
                         }
                     }
                     for (int i = 0; i < outputs.length; i++) {
                         String type = getTypeForInOut( outputs[i] );
-                        Queue<SbOutput> queue = outputMap.get( type );
+                        Map<String, SbOutput> queue = outputMap.get( type );
                         if (queue == null) {
-                            queue = new LinkedList<SbOutput>();
+                            queue = new HashMap<String, SbOutput>();
                             outputMap.put( type, queue );
                         }
                         if (outputs[i].getConnectedInput() == null) {
-                            queue.offer( outputs[i] );
+                            queue.put( outputs[i].getOutputId(), outputs[i] );
                         }
                     }
                     
@@ -179,18 +177,24 @@ public class SoundbusToolkit {
                     SbInput sbInput = null;
                     for (PlugDescriptor pd : inPds) {
                         if (pd.getId().equals( inId )) {
-                            Queue<SbInput> queue = inputMap.get( pd.getType() );
+                            Map<String, SbInput> queue = inputMap.get( pd.getType() );
                             if (queue == null) {
                                 throw new IllegalSoundbusDescriptionException(
                                         "No connector of type " + pd.getType() +
                                         " found on " + inNode.getName() );
                             }
-                            sbInput = queue.poll();
+                            String key = pd.getId();
+                            sbInput = queue.get(key);
+                            if (sbInput == null && queue.size() > 0) {
+                                key = queue.keySet().iterator().next();
+                                sbInput = queue.get(key);
+                            }
                             if (sbInput == null) {
                                 throw new IllegalSoundbusDescriptionException(
                                         "Too few connectors of type " + pd.getType() +
                                         " available on " + inNode.getName() );
                             }
+                            queue.remove(key);
                             break;
                         }
                     }
@@ -198,18 +202,24 @@ public class SoundbusToolkit {
                     SbOutput sbOutput = null;
                     for (PlugDescriptor pd : outPds) {
                         if (pd.getId().equals( outId )) {
-                            Queue<SbOutput> queue = outputMap.get( pd.getType() );
+                            Map<String, SbOutput> queue = outputMap.get( pd.getType() );
                             if (queue == null) {
                                 throw new IllegalSoundbusDescriptionException(
                                         "No connector of type " + pd.getType() +
                                         " found on " + outNode.getName() );
                             }
-                            sbOutput = queue.poll();
+                            String key = pd.getId();
+                            sbOutput = queue.get(key);
+                            if (sbOutput == null && queue.size() > 0) {
+                                key = queue.keySet().iterator().next();
+                                sbOutput = queue.get(key);
+                            }
                             if (sbOutput == null) {
                                 throw new IllegalSoundbusDescriptionException(
                                         "Too few connectors of type " + pd.getType() +
                                         " available on " + outNode.getName() );
                             }
+                            queue.remove(key);
                             break;
                         }
                     }
@@ -295,7 +305,7 @@ public class SoundbusToolkit {
                     Element inputsElem = new Element( "inputs" );
                     for (int j = 0; j < inputs.length; j++) {
                         Element elem = new Element( "input" );
-                        String id = Long.toHexString( inputs[j].hashCode() );
+                        String id = inputs[j].getInputId();
                         elem.setAttribute( "type", getTypeForInOut( inputs[j] ) );
                         elem.setAttribute( "name", inputs[j].getName() );
                         elem.setAttribute( "id", id );
@@ -311,7 +321,7 @@ public class SoundbusToolkit {
                             Element connectionOutput = new Element( "output" );
                             connectionOutput.setAttribute(
                                     "nodeId", Long.toHexString( output.getSbNode().hashCode() ) );
-                            connectionOutput.setAttribute( "outputId", Long.toHexString( output.hashCode() ) );
+                            connectionOutput.setAttribute( "outputId", output.getOutputId() );
                             connection.addContent( connectionInput );
                             connection.addContent( connectionOutput );
                             connections.addContent( connection );
@@ -328,7 +338,7 @@ public class SoundbusToolkit {
                         Element elem = new Element( "output" );
                         elem.setAttribute( "type", getTypeForInOut( outputs[j] ) );
                         elem.setAttribute( "name", outputs[j].getName() );
-                        elem.setAttribute( "id", Long.toHexString( outputs[j].hashCode() ) );
+                        elem.setAttribute( "id", outputs[j].getOutputId() );
                         outputsElem.addContent( elem );
                     }
                     node.addContent( outputsElem );

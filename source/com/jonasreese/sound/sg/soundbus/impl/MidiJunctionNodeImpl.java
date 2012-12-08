@@ -46,12 +46,12 @@ public class MidiJunctionNodeImpl implements MidiJunctionNode, NodeImpl {
         clientProperties = new HashMap<String,String>();
         propertyChangeSupport = new PropertyChangeSupport( this );
         outputs = new SbMidiOutputImpl[] {
-                new SbMidiOutputImpl( SgEngine.getInstance().getResourceBundle().getString( "midi.output" ) )
+                new SbMidiOutputImpl( SgEngine.getInstance().getResourceBundle().getString( "midi.output" ), "output_1" )
         };
         inputs = new SbMidiInputImpl[numInputs];
         String inputName = SgEngine.getInstance().getResourceBundle().getString( "midi.input" );
         for (int i = 0; i < numInputs; i++) {
-            inputs[i] = new SbMidiInputImpl( inputName );
+            inputs[i] = new SbMidiInputImpl( inputName, "input_" + (i + 1) );
         };
 
     }
@@ -123,9 +123,11 @@ public class MidiJunctionNodeImpl implements MidiJunctionNode, NodeImpl {
     class SbMidiInputImpl implements SbMidiInput {
         private SbOutput connectedOutput;
         private String name;
+        private String inputId;
         
-        SbMidiInputImpl( String name ) {
+        SbMidiInputImpl( String name, String inputId ) {
             this.name = name;
+            this.inputId = inputId;
         }
         
         public void receive( MidiMessage m, SbOutput output ) {
@@ -143,6 +145,10 @@ public class MidiJunctionNodeImpl implements MidiJunctionNode, NodeImpl {
             return null;
         }
 
+        public String getInputId() {
+            return inputId;
+        }
+        
         public SbNode getSbNode() {
             return MidiJunctionNodeImpl.this;
         }
@@ -182,8 +188,9 @@ public class MidiJunctionNodeImpl implements MidiJunctionNode, NodeImpl {
     class SbMidiOutputImpl implements SbMidiOutput {
         private SbMidiInput connectedInput;
         private String name;
+        private String outputId;
         
-        SbMidiOutputImpl( String name ) {
+        SbMidiOutputImpl( String name, String outputId ) {
             this.name = name;
         }
 
@@ -195,6 +202,10 @@ public class MidiJunctionNodeImpl implements MidiJunctionNode, NodeImpl {
             return null;
         }
 
+        public String getOutputId() {
+            return outputId;
+        }
+        
         public SbNode getSbNode() {
             return MidiJunctionNodeImpl.this;
         }

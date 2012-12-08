@@ -57,9 +57,13 @@ import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import com.apple.eawt.AboutHandler;
+import com.apple.eawt.AppEvent;
+import com.apple.eawt.AppEvent.QuitEvent;
 import com.apple.eawt.Application;
-import com.apple.eawt.ApplicationEvent;
-import com.apple.eawt.ApplicationListener;
+import com.apple.eawt.PreferencesHandler;
+import com.apple.eawt.QuitHandler;
+import com.apple.eawt.QuitResponse;
 import com.jgoodies.looks.HeaderStyle;
 import com.jgoodies.looks.Options;
 import com.jonasreese.sound.sg.Session;
@@ -582,27 +586,21 @@ public class SgFrame extends JrFrame
     private void prepareUi() {
         if (UiToolkit.isMacOs()) {
             Application app = Application.getApplication();
-            app.setEnabledPreferencesMenu( true );
-            app.addApplicationListener( new ApplicationListener() {
-                public void handleAbout( ApplicationEvent e ) {
+            app.setAboutHandler(new AboutHandler() {
+                public void handleAbout( AppEvent.AboutEvent e ) {
                     showAboutDialog();
-                    e.setHandled( true );
                 }
-                public void handleOpenApplication( ApplicationEvent e ) {
-                }
-                public void handleOpenFile( ApplicationEvent e ) {
-                }
-                public void handlePreferences( ApplicationEvent e ) {
+            });
+            app.setPreferencesHandler(new PreferencesHandler() {
+                public void handlePreferences( AppEvent.PreferencesEvent e ) {
                     actionPool.getAction( StaticActionPool.PROGRAM_SETTINGS ).actionPerformed( null );
-                    e.setHandled( true );
                 }
-                public void handlePrintFile( ApplicationEvent e ) {
-                }
-                public void handleQuit( ApplicationEvent e ) {
-                    e.setHandled( false );
-                    requestClose();
-                }
-                public void handleReOpenApplication( ApplicationEvent e ) {
+            });
+            app.setQuitHandler(new QuitHandler() {
+                public void handleQuitRequestWith(QuitEvent e, QuitResponse r) {
+                    if (!requestClose()) {
+                        r.cancelQuit();
+                    }
                 }
             } );
         }

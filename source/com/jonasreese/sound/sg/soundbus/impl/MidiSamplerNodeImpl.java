@@ -59,10 +59,10 @@ public class MidiSamplerNodeImpl implements MidiSamplerNode, NodeImpl {
         propertyChangeSupport = new PropertyChangeSupport( this );
         open = false;
         inputs = new SbMidiInputImpl[] {
-                new SbMidiInputImpl( SgEngine.getInstance().getResourceBundle().getString( "midi.trigger.input" ) )
+                new SbMidiInputImpl( SgEngine.getInstance().getResourceBundle().getString( "midi.trigger.input" ), "input_1" )
         };
         outputs = new SbMidiOutputImpl[] {
-                new SbMidiOutputImpl( SgEngine.getInstance().getResourceBundle().getString( "midi.output" ) )
+                new SbMidiOutputImpl( SgEngine.getInstance().getResourceBundle().getString( "midi.output" ), "output_1" )
         };
         midiOutputReceiver = null;
         midiDescriptor = null;
@@ -283,9 +283,11 @@ public class MidiSamplerNodeImpl implements MidiSamplerNode, NodeImpl {
     class SbMidiInputImpl implements SbMidiInput {
         private SbOutput connectedOutput;
         private String name;
+        private String inputId;
         
-        SbMidiInputImpl( String name ) {
+        SbMidiInputImpl( String name, String inputId ) {
             this.name = name;
+            this.inputId = inputId;
         }
         
         public void receive( MidiMessage m, SbOutput output ) {
@@ -337,6 +339,10 @@ public class MidiSamplerNodeImpl implements MidiSamplerNode, NodeImpl {
         public String getDescription() {
             return null;
         }
+        
+        public String getInputId() {
+            return inputId;
+        }
 
         public SbNode getSbNode() {
             return MidiSamplerNodeImpl.this;
@@ -377,9 +383,11 @@ public class MidiSamplerNodeImpl implements MidiSamplerNode, NodeImpl {
     class SbMidiOutputImpl implements SbMidiOutput {
         private SbMidiInput connectedInput;
         private String name;
+        private String outputId;
 
-        SbMidiOutputImpl( String name ) {
+        SbMidiOutputImpl( String name, String outputId ) {
             this.name = name;
+            this.outputId = outputId;
         }
         
         public boolean canConnect( SbInput in ) {
@@ -420,6 +428,10 @@ public class MidiSamplerNodeImpl implements MidiSamplerNode, NodeImpl {
 
         public String getDescription() {
             return null;
+        }
+        
+        public String getOutputId() {
+            return outputId;
         }
 
         public SbNode getSbNode() {

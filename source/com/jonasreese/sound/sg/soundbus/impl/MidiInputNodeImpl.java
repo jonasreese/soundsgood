@@ -198,6 +198,10 @@ public class MidiInputNodeImpl implements MidiInputNode, NodeImpl {
             return null;
         }
 
+        public String getOutputId() {
+            return "output_1";
+        }
+        
         public boolean canConnect( SbInput in ) {
             return (in instanceof SbMidiInput);
         }

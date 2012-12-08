@@ -108,7 +108,7 @@ public class VstNodeImpl implements VstNode, NodeImpl {
         if (vstPlugin == null || vstPlugin.canDo( VstPlugin.CANDO_PLUG_RECEIVE_VST_MIDI_EVENT ) >= 0) {
             if (midiInput == null) {
                 midiInput = (cachedMidiInput != null ? cachedMidiInput : new SbMidiInputImpl( 
-                        SgEngine.getInstance().getResourceBundle().getString( "midi.input" ) ));
+                        SgEngine.getInstance().getResourceBundle().getString( "midi.input" ), "input_midi" ));
             }
         } else {
             if (midiInput != null) {
@@ -127,7 +127,7 @@ public class VstNodeImpl implements VstNode, NodeImpl {
         if (vstPlugin == null || vstPlugin.canDo( VstPlugin.CANDO_PLUG_SEND_VST_MIDI_EVENT ) > 0) {
             if (midiOutput == null) {
                 midiOutput = (cachedMidiOutput != null ? cachedMidiOutput : new SbMidiOutputImpl(
-                        SgEngine.getInstance().getResourceBundle().getString( "midi.output" ) ));
+                        SgEngine.getInstance().getResourceBundle().getString( "midi.output" ), "output_midi" ));
             }
         } else {
             if (midiOutput != null) {
@@ -148,7 +148,7 @@ public class VstNodeImpl implements VstNode, NodeImpl {
         // create audio outputs
         if (vstPlugin != null) {
             if (audioOutput == null) {
-                audioOutput = new SbAudioOutputImpl();
+                audioOutput = new SbAudioOutputImpl("output_audio");
             }
             audioOutput.audioFormat = AudioToolkit.getDefaultAudioFormat( vstPlugin.getNumOutputs() );
         } else {
@@ -159,7 +159,7 @@ public class VstNodeImpl implements VstNode, NodeImpl {
         }
         if (vstPlugin != null) {
             if (audioInput == null) {
-                audioInput = new SbAudioInputImpl();
+                audioInput = new SbAudioInputImpl("input_audio");
             }
             audioInput.replacing = vstPlugin.canProcessReplacing();
             audioInput.numInputs = vstPlugin.getNumInputs();
@@ -396,10 +396,12 @@ public class VstNodeImpl implements VstNode, NodeImpl {
         int numInputs;
         int numOutputs;
         byte[] outputData;
+        String inputId;
         
-        SbAudioInputImpl() {
+        SbAudioInputImpl(String inputId) {
             visible = true;
             outputData = null;
+            this.inputId = inputId;
         }
         
         void open() {
@@ -416,6 +418,10 @@ public class VstNodeImpl implements VstNode, NodeImpl {
 
         public String getDescription() {
             return AudioToolkit.getAudioInputDescription( AudioToolkit.getDefaultAudioFormat( numInputs ) );
+        }
+        
+        public String getInputId() {
+            return inputId;
         }
 
         public void receive( byte[] inputData, int offset, int length, AudioDataPump pump ) {
@@ -495,6 +501,11 @@ public class VstNodeImpl implements VstNode, NodeImpl {
 
         SbAudioInput in;
         AudioFormat audioFormat;
+        String outputId;
+        
+        public SbAudioOutputImpl(String outputId) {
+            this.outputId = outputId;
+        }
         
         void open() {
         }
@@ -511,6 +522,10 @@ public class VstNodeImpl implements VstNode, NodeImpl {
             return AudioToolkit.getAudioOutputDescription( audioFormat );
         }
 
+        public String getOutputId() {
+            return outputId;
+        }
+        
         public boolean canConnect( SbInput in ) {
             return (in instanceof SbAudioInput);
         }
@@ -546,9 +561,11 @@ public class VstNodeImpl implements VstNode, NodeImpl {
     class SbMidiInputImpl implements SbMidiInput {
         SbMidiOutput output;
         String name;
+        String inputId;
         VstMidiEvent[] events = new VstMidiEvent[1];
-        SbMidiInputImpl( String name ) {
+        SbMidiInputImpl( String name, String inputId ) {
             this.name = name;
+            this.inputId = inputId;
             events[0] = new VstMidiEvent();
         }
         public String getName() {
@@ -556,6 +573,9 @@ public class VstNodeImpl implements VstNode, NodeImpl {
         }
         public String getDescription() {
             return null;
+        }
+        public String getInputId() {
+            return inputId;
         }
         public void receive( MidiMessage m, SbOutput output ) {
             if (vstPlugin != null) {
@@ -588,14 +608,19 @@ public class VstNodeImpl implements VstNode, NodeImpl {
     class SbMidiOutputImpl implements SbMidiOutput {
         SbMidiInput in;
         String name;
-        SbMidiOutputImpl( String name ) {
+        String outputId;
+        SbMidiOutputImpl( String name, String outputId ) {
             this.name = name;
+            this.outputId = outputId;
         }
         public String getName() {
             return name;
         }
         public String getDescription() {
             return null;
+        }
+        public String getOutputId() {
+            return outputId;
         }
         public boolean canConnect( SbInput in ) {
             return (in instanceof SbMidiInput);

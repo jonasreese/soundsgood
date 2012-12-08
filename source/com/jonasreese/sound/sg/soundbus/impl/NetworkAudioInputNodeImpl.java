@@ -263,6 +263,10 @@ public class NetworkAudioInputNodeImpl implements NetworkAudioInputNode, NodeImp
         public String getDescription() {
             return AudioToolkit.getAudioOutputDescription( AudioToolkit.getDefaultAudioFormat() );
         }
+        
+        public String getOutputId() {
+            return "output_1";
+        }
 
         public boolean canConnect( SbInput in ) {
             return (in instanceof SbAudioInput);

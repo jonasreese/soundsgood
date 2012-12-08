@@ -64,7 +64,6 @@ public class MetronomeImpl implements Metronome, PropertyChangeListener {
         midiOutputReceivers = new ArrayList<Receiver>();
         tempoInBpm = 120;
         this.updateOnPropertyChange = updateOnPropertyChange;
-        initMetronome();
     }
     
     private void initMetronome() {
@@ -123,11 +122,7 @@ public class MetronomeImpl implements Metronome, PropertyChangeListener {
             return;
         }
         if (this.updateOnPropertyChange) {
-            if (stress != SgEngine.getInstance().getProperties().isStressOnClickOne()) {
-                initMetronome();
-            } else if (beatsPerTact != SgEngine.getInstance().getProperties().getClicksPerTact()) {
-                beatsPerTact = SgEngine.getInstance().getProperties().getClicksPerTact();
-            }
+            initMetronome();
         }
         
         metronomeThread = new MetronomeThread();
@@ -155,6 +150,7 @@ public class MetronomeImpl implements Metronome, PropertyChangeListener {
     
     public synchronized void sync() {
         if (metronomeThread != null) {
+            metronomeThread.sync = true;
             metronomeThread.interrupt();
         }
     }
@@ -291,6 +287,7 @@ public class MetronomeImpl implements Metronome, PropertyChangeListener {
     
     
     class MetronomeThread extends Thread {
+        boolean sync;
         double nanosPerClick;
         double nanosPerMidiClock;
         long nextClickFireTime;
@@ -307,10 +304,12 @@ public class MetronomeImpl implements Metronome, PropertyChangeListener {
             nextClickFireTime = System.nanoTime();
             nextMidiClockFireTime = nextClickFireTime;
             nextClickOffFireTime = Long.MAX_VALUE;
+            sync = false;
             
             int c = 0;
             int click = 0;
             boolean clock = false;
+            boolean sentNoteOn = false;
             while (running) {
                 try {
                     if (clock) {
@@ -323,6 +322,7 @@ public class MetronomeImpl implements Metronome, PropertyChangeListener {
                         }
                         MidiEvent event = (click == 0 ? (on ? firstOnEvent : firstOffEvent) : (on ? onEvent : offEvent));
                         metronomeReceiver.send( event.getMessage(), 0 );
+                        sentNoteOn = on;
                         if (on) {
                             if (sendMidiClockEnabled) { // sync to tact
                                 nextMidiClockFireTime = nextClickFireTime + (long) nanosPerMidiClock;
@@ -364,8 +364,12 @@ public class MetronomeImpl implements Metronome, PropertyChangeListener {
                     }
                     waitUntil( nextFireTime );
                 } catch (InterruptedException e) {
+                }
+                
+                if (sync || !running) {
+                    sync = false;
                     boolean wasOn = false;
-                    if (on) {
+                    if (sentNoteOn) {
                         wasOn = true;
                         MidiEvent event = (click == 0 ? firstOffEvent : offEvent);
                         metronomeReceiver.send( event.getMessage(), click );
