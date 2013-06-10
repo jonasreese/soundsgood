@@ -179,7 +179,7 @@ public class MidiMessageView implements View, Icon
                                     ta.append( "File name: " +
                                         descriptor.getFile().getName() + "\n\n" );
                                 }
-                                ta.append( "Length (µs): " + seq.getMicrosecondLength() + "\n\n" );
+                                ta.append( "Length (micros): " + seq.getMicrosecondLength() + "\n\n" );
                                 Track[] tracks = seq.getTracks();
                                 ta.append( "Tracks: " + tracks.length + "\n" );
                                 for (int i = 0; i < tracks.length; i++)

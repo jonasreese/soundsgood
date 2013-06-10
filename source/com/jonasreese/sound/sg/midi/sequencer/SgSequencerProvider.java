@@ -23,7 +23,7 @@ public class SgSequencerProvider extends MidiDeviceProvider
             {
                 info = new SgSequencer.Info(
                     "SoundsGood Sequencer",
-                    "© Jonas Reese",
+                    "(c) Jonas Reese",
                     "",
                     "1.0");
             }
