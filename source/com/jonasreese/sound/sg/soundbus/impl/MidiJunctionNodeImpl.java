@@ -192,6 +192,7 @@ public class MidiJunctionNodeImpl implements MidiJunctionNode, NodeImpl {
         
         SbMidiOutputImpl( String name, String outputId ) {
             this.name = name;
+            this.outputId = outputId;
         }
 
         public String getName() {
